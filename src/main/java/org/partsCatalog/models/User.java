@@ -5,6 +5,7 @@ import org.partsCatalog.models.enums.UserRole;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -32,6 +33,11 @@ public class User {
     private UserRole userRole;
 
     @ManyToMany()
+    @JoinTable(
+            name = "user_likedPart",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "part_id")}
+    )
     private Set<Part> likedParts = new HashSet<>();
 
 
@@ -102,5 +108,18 @@ public class User {
 
     public void setLikedParts(Set<Part> likedParts) {
         this.likedParts = likedParts;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id.equals(user.id) && firstName.equals(user.firstName) && lastName.equals(user.lastName) && email.equals(user.email) && password.equals(user.password) && userRole == user.userRole && Objects.equals(likedParts, user.likedParts);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, email, password, userRole);
     }
 }
